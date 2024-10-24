@@ -1,0 +1,83 @@
+{% extends 'layouts/chinese_base.html' %}
+
+{% block content %}
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/chinese_discover.css' %}"></link>
+
+    <!-- Search Form -->
+    <form id="filter-form" method="GET" action="{% url 'chinese-discover' %}">
+        {% csrf_token %}
+        <div id="filter-by-container">
+            <label for="filter-by">Filter By:</label>
+            <select name="filter_by" id="filter_by" onchange="updateOptions()">
+                <option value="title" {% if filter_by == 'title' %}selected{% endif %}>Title</option>
+                <option value="author" {% if filter_by == 'author' %}selected{% endif %}>Author</option>
+                <option value="hsk_level" {% if filter_by == 'hsk_level' %}selected{% endif %}>HSK Level</option>
+                <option value="downloads" {% if filter_by == 'downloads' %}selected{% endif %}>Downloads</option>
+            </select>
+        </div>
+        
+        <div id="options-select-container">
+            <label for="options-select">Select:</label>
+            <select name="option" id="options-select">
+                <option value="">Choose an option</option>
+                {% for option in options %}
+                    <option value="{{ option }}" {% if option == request.GET.option %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button  id="search-button" type="submit" onclick="event.preventDefault(); updateDecks();">Search </button>
+    </form>
+
+    <!-- Decks List -->
+    <div id="decks-container" class="decks-container">
+        {% include 'partials/_deck_list.html' with decks=decks %}
+    </div>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+
+        function updateOptions() {
+            const form = document.getElementById('filter-form');
+            form.submit();  // Automatically submit form to update options
+        }
+
+        function updateDecks() {
+            const form = document.getElementById('filter-form');
+            const formData = new FormData(form);
+            const url = form.action;
+
+            fetch(url + '?' + new URLSearchParams(formData), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken  
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the decks container with the new HTML
+                document.getElementById('decks-container').innerHTML = data.html;
+            })
+            .catch(error => console.log('Error:', error));
+        }
+    </script>
+{% endblock %}

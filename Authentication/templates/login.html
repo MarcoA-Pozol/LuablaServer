@@ -1,0 +1,17 @@
+{% extends  "layouts/welcome_base.html" %}
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+    <form class="login-form" method="POST">
+        {% csrf_token %}
+        <h2>╾╾╾━━━━━ Login ━━━━━╼╼╼</h2>
+        {{ form.username.label_tag }}
+        {{ form.username }}
+
+        {{ form.password.label_tag }}
+        {{ form.password }}
+
+        <button type="submit">Login</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends  "layouts/welcome_base.html" %}
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+    <form class="register-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>╾╾╾━━━━━ Register ━━━━━╼╼╼</h2>
+        {{form.username.label_tag}}
+        {{form.username}}
+
+        {{form.email.label_tag}}
+        {{form.email}}
+
+        {{form.password.label_tag}}
+        {{form.password}}
+
+        {{form.confirm_password.label_tag}}
+        {{form.confirm_password}}
+
+        {{form.country.label_tag}}
+        {{form.country}}
+
+        {{form.genre.label_tag}}
+        {{form.genre}}
+
+        {{form.learning_goals.label_tag}}
+        {{form.learning_goals}}
+
+        {{form.profile_picture.label_tag}}
+        {{form.profile_picture}}
+
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

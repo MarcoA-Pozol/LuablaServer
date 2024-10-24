@@ -1,0 +1,28 @@
+{% extends 'layouts/chinese_base.html' %}
+
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/chinese_create_deck.css' %}">
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Deck creation</h2>
+
+        {{ form.title.label }}
+        {{ form.title }}
+        
+        {{ form.description.label }}
+        {{ form.description }}
+        
+        {{ form.hsk_level.label }}
+        {{ form.hsk_level }}
+
+        {{ form.is_shareable.label }}
+        {{ form.is_shareable}}
+        
+        {{ form.image.label }}
+        {{ form.image }}
+        <button type="submit">Submit</button>
+    </form>
+
+{% endblock %}
