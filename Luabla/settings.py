@@ -26,13 +26,15 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'http://localhost:3001',
     'https://*.ngrok-free.app',
     'https://*'
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies if needed
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:3001'
 ] 
 # Application definition
 
