@@ -7,4 +7,5 @@ urlpatterns = [
     path('chineseDeck', views.ChineseDeckView.as_view(), name='chineseDeck'),
     path('japaneseDeck', views.JapaneseDeckView.as_view(), name='japaneseDeck'),
     path('koreanDeck', views.KoreanDeckView.as_view(), name='koreanDeck'),
+    path('acquireDeck', views.AcquireDeck.as_view(), name='acquireDeck'),
 ]

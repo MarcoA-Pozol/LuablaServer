@@ -102,7 +102,25 @@ class LibraryDeckView(APIView):
         except Exception as e:
             return Response({'error': f'Unexpected error ocurred: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class AcquireDeck(APIView):
+    def patch(self, request):
+        try:
+            language = request.data.get('language')
+            deckId = request.data.get('deckId')
+            deck_model = {
+                'ZH': ChineseDeck,
+                'KO': KoreanDeck,
+                'JP': JapaneseDeck
+            }.get(language, Deck)
+            deck = deck_model.objects.filter(id=deckId).first()
+            reqUser = request.user
 
+            deck.owners.add(reqUser)
+            deck.save()
+
+            return Response({'message': 'Updated deck owners'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f'Unexpected error: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR);
 
 
 class ChineseDeckView(APIView):
