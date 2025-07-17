@@ -38,7 +38,7 @@ class DeckView(APIView):
                 serialized_decks = serializer(decks_list, many=True)
                 serialized_owned_decks = serializer(owned_decks_list, many=True)
 
-                if len(decks_list) <= 0 and len(owned_decks_list <= 0):
+                if len(decks_list) <= 0 and len(owned_decks_list) <= 0:
                     return Response({'error':'Decks not found'}, status=status.HTTP_404_NOT_FOUND)
                 
                 return Response({'decks':serialized_decks.data, 'ownedDecks':serialized_owned_decks.data}, status=status.HTTP_200_OK)
