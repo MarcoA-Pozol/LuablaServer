@@ -34,12 +34,14 @@ class DeckView(APIView):
                     'JP': JapaneseDeck
                 }.get(language, Deck)
                 decks_list = deck_model.objects.filter(author=user, language=language).all()
-                serialized = serializer(decks_list, many=True)
+                owned_decks_list = deck_model.objects.filter(owners=user, language=language).all()
+                serialized_decks = serializer(decks_list, many=True)
+                serialized_owned_decks = serializer(owned_decks_list, many=True)
 
-                if len(decks_list) <= 0:
+                if len(decks_list) <= 0 and len(owned_decks_list <= 0):
                     return Response({'error':'Decks not found'}, status=status.HTTP_404_NOT_FOUND)
                 
-                return Response({'decks':serialized.data}, status=status.HTTP_200_OK)
+                return Response({'decks':serialized_decks.data, 'ownedDecks':serialized_owned_decks.data}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'error': f'Unexpected error ocurred: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
