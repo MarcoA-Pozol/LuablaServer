@@ -8,6 +8,26 @@ from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
 class FlashcardView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+
+
+        try:
+            deck_id = request.query_params.get('deckId')
+            language = request.data.get('language')
+
+            flashcard_model = {
+                'ZH': ChineseFlashcard,
+                'KO': KoreanFlashcard,
+                'JP': JapaneseFlashcard,
+                'RU': RussianFlashcard
+            }.get(language, Flashcard)
+
+            flashcards_list = flashcard_model.objects.filter(deck=deck_id).all()
+
+            return Response({'flashcards_list':flashcards_list}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error':f'Unexpected error: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def post(self, request):
         try:
             deck_id = request.query_params.get('deckId')
