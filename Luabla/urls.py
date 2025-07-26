@@ -11,6 +11,7 @@ urlpatterns = [
     path(f'{base_api_url}app/', include('Application.urls')),
     path(f'{base_api_url}flashcards/', include('Flashcards.urls')),
     path(f'{base_api_url}decks/', include('Decks.urls')),
+    path(f'{base_api_url}social/', include('Social.urls')),
 ]
 
 # This is to enable Django to serve media files during development stage.
