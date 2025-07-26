@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'Authentication',
     'Application',
     'Flashcards',
-    'Decks'
+    'Decks',
+    'Social'
 ]
 
 # API Settings
