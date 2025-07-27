@@ -37,6 +37,7 @@ class NotificationsView(APIView):
         try:
             notification = Notification.objects.create(destinatary=request.user, title=title, description=description, category=category, is_read=False)
             notification.save()
-            return Response({'notification':notification, 'message':'Notification created'}, status=HTTP_201_CREATED)
+            serialized_notification = NotificationSerializer(notification)
+            return Response({'notification':serialized_notification, 'message':'Notification created'}, status=HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
