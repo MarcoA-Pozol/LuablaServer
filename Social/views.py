@@ -22,7 +22,7 @@ class NotificationsView(APIView):
                 return Response({'error': 'No notifications were found'}, status=HTTP_404_NOT_FOUND)
 
             serialied_notifications_list = NotificationSerializer(notifications_list, many=True)
-            return Response({'notifications':serialied_notifications_list}, status=HTTP_200_OK)
+            return Response({'notifications':serialied_notifications_list.data}, status=HTTP_200_OK)
         except Exception as e:
             return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -38,6 +38,6 @@ class NotificationsView(APIView):
             notification = Notification.objects.create(destinatary=request.user, title=title, description=description, category=category, is_read=False)
             notification.save()
             serialized_notification = NotificationSerializer(notification)
-            return Response({'notification':serialized_notification, 'message':'Notification created'}, status=HTTP_201_CREATED)
+            return Response({'notification':serialized_notification.data, 'message':'Notification created'}, status=HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
