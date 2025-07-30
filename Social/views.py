@@ -4,6 +4,23 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from . models import Notification
 from . serializers import NotificationSerializer
+from rest_framework.decorators import api_view, permission_classes
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def fetch_all_notifications(request):
+    try:
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'Not authenticated'}, status=HTTP_401_UNAUTHORIZED)
+
+        notifications = Notification.objects.filter(destinatary=user)
+        notifications_count = notifications.count()
+        serialized_notifications = NotificationSerializer(notifications, many=True)
+
+        return Response({'notifications':serialized_notifications, 'notifications_count':notifications_count})
+    except Exception as e:
+        return Response({'error':f'Unexpected error:{e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 class NotificationsView(APIView):
     permission_classes = [IsAuthenticated]
