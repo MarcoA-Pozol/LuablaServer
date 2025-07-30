@@ -18,7 +18,7 @@ def fetch_all_notifications(request):
         notifications_count = notifications.count()
         serialized_notifications = NotificationSerializer(notifications, many=True)
 
-        return Response({'notifications':serialized_notifications, 'notifications_count':notifications_count})
+        return Response({'notifications':serialized_notifications.data, 'notifications_count':notifications_count})
     except Exception as e:
         return Response({'error':f'Unexpected error:{e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
