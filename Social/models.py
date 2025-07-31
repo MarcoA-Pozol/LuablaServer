@@ -24,7 +24,7 @@ class Notification(models.Model):
         """Frontend can access both values from the choices easily"""
         return {
             'value': self.category,
-            'label': dict(self.CATEGORY_CHOICES).get(self.category)
+            'label': dict(NOTIFICATION_CATEGORIES).get(self.category)
         }
 
     def __str__(self):
