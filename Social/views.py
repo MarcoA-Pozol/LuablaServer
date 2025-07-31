@@ -10,7 +10,7 @@ from . datasets import NOTIFICATION_CATEGORIES
 @api_view(['GET'])
 def fetch_notifications_categories_list(request):
     try:
-        categories_list = NOTIFICATION_CATEGORIES
+        categories_list = [category[1] for category in NOTIFICATION_CATEGORIES] 
         return Response({'categories':categories_list}, status=HTTP_200_OK)
     except Exception as e:
         return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
