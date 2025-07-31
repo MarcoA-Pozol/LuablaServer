@@ -2,7 +2,7 @@ from rest_framework.serializers import ModelSerializer, CharField
 from . models import Notification
 
 class NotificationSerializer(ModelSerializer):
-    category_display = CharField(source='get_category_display', read_only=True)
+    category_label = CharField(source='get_category_label', read_only=True)
 
     class Meta:
         model = Notification

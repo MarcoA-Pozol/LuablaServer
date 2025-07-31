@@ -20,12 +20,9 @@ class Notification(models.Model):
         db_table = 'Notifications'
 
     @property
-    def get_category_display(self):
-        """Frontend can access both values from the choices easily"""
-        return {
-            'value': self.category,
-            'label': dict(NOTIFICATION_CATEGORIES).get(self.category)
-        }
+    def get_category_label(self):
+        """Frontend can access to the human-readable value for notification.category"""
+        return dict(NOTIFICATION_CATEGORIES).get(self.category)
 
     def __str__(self):
         return f'{self.title} - {self.destinarary.username}'
