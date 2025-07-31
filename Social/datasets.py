@@ -13,5 +13,6 @@ NOTIFICATION_CATEGORIES = [
     ('LEVEL_UP', 'Level Up'),
     ('STREAK', 'Streak'),
     ('NEW_CONTENT', 'New Content'),
-    ('NEW_LIBRARY_DECK', 'New Library Deck')
+    ('CREATED_DECK', 'Created Deck'),
+    ('OBTAINED_DECK', 'Obtained Deck')
 ]
