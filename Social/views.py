@@ -5,6 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 from . models import Notification
 from . serializers import NotificationSerializer
 from rest_framework.decorators import api_view, permission_classes
+from . datasets import NOTIFICATION_CATEGORIES
+
+@api_view(['GET'])
+def fetch_notifications_categories_list(request):
+    try:
+        categories_list = NOTIFICATION_CATEGORIES
+        return Response({'categories':categories_list}, status=HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
