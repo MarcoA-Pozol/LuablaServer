@@ -23,6 +23,11 @@ class Notification(models.Model):
     def get_category_label(self):
         """Frontend can access to the human-readable value for notification.category"""
         return dict(NOTIFICATION_CATEGORIES).get(self.category)
+    
+    @property
+    def get_read_status(self):
+        """Return read | unread instead of True | False to is_read field"""
+        return "read" if self.category == True else "unread"
 
     def __str__(self):
         return f'{self.title} - {self.destinarary.username}'
