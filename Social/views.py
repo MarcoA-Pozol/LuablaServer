@@ -56,9 +56,9 @@ class NotificationsView(APIView):
             if notifications_count < 1:
                 return Response({'error': 'No notifications were found'}, status=HTTP_404_NOT_FOUND)
             
-            latest_notifications = notifications_list[:5]
+            # latest_notifications = notifications_list[:5]
 
-            serialied_notifications_list = NotificationSerializer(latest_notifications, many=True)
+            serialied_notifications_list = NotificationSerializer(notifications_list, many=True)
             return Response({'notifications':serialied_notifications_list.data, 'notifications_count':notifications_count}, status=HTTP_200_OK)
         except Exception as e:
             return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)

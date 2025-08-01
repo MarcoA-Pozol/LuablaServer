@@ -26,8 +26,8 @@ class Notification(models.Model):
     
     @property
     def get_read_status(self):
-        """Return read | unread instead of True | False to is_read field"""
-        return "read" if self.is_read == True else "unread"
+        """Return Read | Unread instead of True | False to is_read field"""
+        return "Read" if self.is_read == True else "Unread"
 
     def __str__(self):
         return f'{self.title} - {self.destinarary.username}'
