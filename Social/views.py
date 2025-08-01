@@ -8,7 +8,14 @@ from rest_framework.decorators import api_view, permission_classes
 from . datasets import NOTIFICATION_CATEGORIES
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def fetch_notifications_categories_list(request):
+    
+    user = request.user 
+
+    if not user.is_authenticated:
+        return Response({'error': 'Not authenticated'}, status=HTTP_401_UNAUTHORIZED)
+
     try:
         categories_list = [category[1] for category in NOTIFICATION_CATEGORIES] 
         return Response({'categories':categories_list}, status=HTTP_200_OK)
