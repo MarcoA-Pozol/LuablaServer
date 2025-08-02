@@ -52,7 +52,7 @@ def toggle_notification_read_status(request):
             return Response({'error': 'Not authenticated'}, status=HTTP_401_UNAUTHORIZED)
         
         notification = Notification.objects.filter(id=notification_id).first()
-        updated_notification = notification
+        updated_notification = NotificationSerializer(notification)
 
         if not notification:
             return Response({'error':'Notification was not found'}, status=HTTP_404_NOT_FOUND)
@@ -60,7 +60,7 @@ def toggle_notification_read_status(request):
         notification.is_read = not notification.is_read # Toggle booleans
         notification.save()
 
-        return Response({'message':'Notiication was set as read', 'updated_notification':updated_notification}, status=HTTP_200_OK)
+        return Response({'message':'Notiication was set as read', 'updated_notification':updated_notification.data}, status=HTTP_200_OK)
     except Exception as e:
         return Response({'error':f'Unexpected error:{e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
