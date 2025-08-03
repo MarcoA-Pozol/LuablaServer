@@ -32,7 +32,7 @@ class FlashcardView(APIView):
 
             flashcards_list = flashcard_serializer(flashcard_model.objects.filter(deck=deck_id).all(), many=True)
 
-            return Response({'flashcards_list':flashcards_list.data}, status=status.HTTP_200_OK)
+            return Response({'flashcards':flashcards_list.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error':f'Unexpected error: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
