@@ -12,8 +12,8 @@ class FlashcardView(APIView):
 
 
         try:
-            deck_id = request.query_params.get('deckId')
-            language = request.data.get('language')
+            deck_id = request.query_params.get('id')
+            language = request.query_params.get('language')
 
             flashcard_model = {
                 'ZH': ChineseFlashcard,
