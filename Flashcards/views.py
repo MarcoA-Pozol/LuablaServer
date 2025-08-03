@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from . models import Flashcard, ChineseFlashcard, JapaneseFlashcard, KoreanFlashcard, RussianFlashcard
 from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
+from . serializers import FlashcardSerializer, ChineseFlashcardSerializer, JapaneseFlashcardSerializer, KoreanFlashcardSerializer, RussianFlashcardSerializer
 
 class FlashcardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -17,12 +18,19 @@ class FlashcardView(APIView):
 
             flashcard_model = {
                 'ZH': ChineseFlashcard,
-                'KO': KoreanFlashcard,
                 'JP': JapaneseFlashcard,
+                'KO': KoreanFlashcard,
                 'RU': RussianFlashcard
             }.get(language, Flashcard)
 
-            flashcards_list = flashcard_model.objects.filter(deck=deck_id).all()
+            flashcard_serializer = {
+                'ZH': ChineseFlashcardSerializer,
+                'JP': JapaneseFlashcardSerializer,
+                'KO': KoreanFlashcardSerializer,
+                'RU': RussianFlashcardSerializer
+            }.get(language, FlashcardSerializer)
+
+            flashcards_list = flashcard_serializer(flashcard_model.objects.filter(deck=deck_id).all(), many=True)
 
             return Response({'flashcards_list':flashcards_list}, status=status.HTTP_200_OK)
         except Exception as e:
