@@ -2,9 +2,37 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from . models import Flashcard, ChineseFlashcard, JapaneseFlashcard, KoreanFlashcard, RussianFlashcard
 from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
 from . serializers import FlashcardSerializer, ChineseFlashcardSerializer, JapaneseFlashcardSerializer, KoreanFlashcardSerializer, RussianFlashcardSerializer
+from rest_framework.decorators import api_view, permission_classes
+import random
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_random_flashcards_list(request):
+    user = request.user
+    language = request.data.get('language')
+    requested_flashcards_quantity = request.data.get('quantity')
+
+    if user is not IsAuthenticated:
+        return Response({'error':'Not authorized'}, status=HTTP_401_UNAUTHORIZED)
+    
+    flashcards_model = {
+        'ZH':ChineseFlashcard,
+        'JP':JapaneseFlashcard,
+        'KO':KoreanFlashcard,
+        'RU':RussianFlashcard
+    }.get(language, Flashcard)
+
+    ids = flashcards_model.objects.values_list('id', flat=True)
+    random_ids = random.sample(ids, requested_flashcards_quantity)
+    
+    flashcards = flashcards_model.objects.filter(id__in=random_ids)
+    serialized_flashcards = FlashcardSerializer(flashcards, many=True)
+
+    return Response({'flashcards':serialized_flashcards}, status=HTTP_200_OK)
 
 class FlashcardView(APIView):
     permission_classes = [IsAuthenticated]
