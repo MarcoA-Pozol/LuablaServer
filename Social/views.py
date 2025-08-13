@@ -76,16 +76,17 @@ class NotificationsView(APIView):
             if not user.is_authenticated:
                 return Response({'error': 'Not authenticated'}, status=HTTP_401_UNAUTHORIZED)
 
-            notifications_list = Notification.objects.filter(destinatary=user)
-            notifications_count = notifications_list.count()
+            notifications = Notification.objects.filter(destinatary=user)
+            notifications_count = notifications.count()
+            new_notifications = notifications.filter(is_read=False)
             
             if notifications_count < 1:
                 return Response({'error': 'No notifications were found'}, status=HTTP_404_NOT_FOUND)
             
             # latest_notifications = notifications_list[:5]
 
-            serialied_notifications_list = NotificationSerializer(notifications_list, many=True)
-            return Response({'notifications':serialied_notifications_list.data, 'notifications_count':notifications_count}, status=HTTP_200_OK)
+            serialized_notifications_list = NotificationSerializer(notifications, many=True)
+            return Response({'notifications':serialized_notifications_list.data, 'notifications_count':notifications_count, 'new_notifications_count':new_notifications.count()}, status=HTTP_200_OK)
         except Exception as e:
             return Response({'error': f'Unexpected error: {e}'}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
