@@ -14,7 +14,7 @@ import random
 def get_random_flashcards_list(request):
     user = request.user
     language = request.data.get('language')
-    requested_flashcards_quantity = request.data.get('quantity') or 10
+    requested_flashcards_quantity = request.data.get('quantity') or 20
 
     if not user.is_authenticated:
         return Response({'error':'Not authorized'}, status=HTTP_401_UNAUTHORIZED)
@@ -26,11 +26,28 @@ def get_random_flashcards_list(request):
         'RU':RussianFlashcard
     }.get(language, Flashcard)
 
+    flashcard_serializer = {
+        'ZH': ChineseFlashcardSerializer,
+        'JP': JapaneseFlashcardSerializer,
+        'KO': KoreanFlashcardSerializer,
+        'RU': RussianFlashcardSerializer
+    }.get(language, FlashcardSerializer)
+
     ids = flashcards_model.objects.values_list('id', flat=True)
     random_ids = random.sample(list(ids), int(requested_flashcards_quantity))
     
-    flashcards = flashcards_model.objects.filter(id__in=random_ids)
-    serialized_flashcards = FlashcardSerializer(flashcards, many=True)
+    if language == "ZH":
+        flashcards = ChineseFlashcard.objects.filter(id__in=random_ids).exclude(hanzi="", meaning="")
+    elif language == "JP":
+        flashcards = JapaneseFlashcard.objects.filter(id__in=random_ids).exclude(kana="", meaning="")
+    elif language == "KO":
+        flashcards = KoreanFlashcard.objects.filter(id__in=random_ids).exclude(hangul="", meaning="")
+    elif language == "RU":
+        flashcards = KoreanFlashcard.objects.filter(id__in=random_ids).exclude(cyrillic="", meaning="")
+    else:
+        flashcards = Flashcard.objects.filter(id__in=random_ids).exclude(word="", meaning="")
+
+    serialized_flashcards = flashcard_serializer(flashcards, many=True)
 
     return Response({'flashcards':serialized_flashcards.data}, status=HTTP_200_OK)
 
