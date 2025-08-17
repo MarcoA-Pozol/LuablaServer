@@ -14,9 +14,9 @@ import random
 def get_random_flashcards_list(request):
     user = request.user
     language = request.data.get('language')
-    requested_flashcards_quantity = request.data.get('quantity')
+    requested_flashcards_quantity = request.data.get('quantity') or 10
 
-    if user is not IsAuthenticated:
+    if not user.is_authenticated:
         return Response({'error':'Not authorized'}, status=HTTP_401_UNAUTHORIZED)
     
     flashcards_model = {
@@ -27,12 +27,12 @@ def get_random_flashcards_list(request):
     }.get(language, Flashcard)
 
     ids = flashcards_model.objects.values_list('id', flat=True)
-    random_ids = random.sample(ids, requested_flashcards_quantity)
+    random_ids = random.sample(list(ids), int(requested_flashcards_quantity))
     
     flashcards = flashcards_model.objects.filter(id__in=random_ids)
     serialized_flashcards = FlashcardSerializer(flashcards, many=True)
 
-    return Response({'flashcards':serialized_flashcards}, status=HTTP_200_OK)
+    return Response({'flashcards':serialized_flashcards.data}, status=HTTP_200_OK)
 
 class FlashcardView(APIView):
     permission_classes = [IsAuthenticated]
