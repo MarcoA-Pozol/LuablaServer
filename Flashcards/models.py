@@ -1,6 +1,7 @@
 from django.db import models
 from Authentication.models import User
 from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
+from Decks.datasets import LANGUAGE_CHOICES
 
 class FlashcardBase(models.Model):
     meaning = models.CharField(max_length=200, null=False)
@@ -11,9 +12,22 @@ class FlashcardBase(models.Model):
 
     class Meta:
         abstract = True
-    
-class Flashcard(FlashcardBase):
-    word = models.CharField(max_length=200, null=True)
+
+class IndoEuropeanFlashcard(FlashcardBase):
+    word = models.CharField(max_length=200, null=True, db_index=True)
+
+    class Meta:
+        abstract = True
+
+class Flashcard(IndoEuropeanFlashcard):
+    language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, null=False, db_index=True)
+
+    def __str__(self):
+        return self.word
+
+class EnglishFlashcard(IndoEuropeanFlashcard):
+    """Allocated space for expected massive rows because of English popularity worldwide"""
+    language = models.CharField(max_length=2, null=False, default="EN")
 
     def __str__(self):
         return self.word
