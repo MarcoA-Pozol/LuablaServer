@@ -39,9 +39,9 @@ class ChineseFlashcard(FlashcardBase):
     hanzi = models.CharField(max_length=40, null=True)
     pinyin = models.CharField(max_length=120, null=True)
     author = models.ForeignKey(User, related_name="chinese_flashcard_author", on_delete=models.CASCADE, db_index=True)
-    deck = models.ForeignKey(ChineseDeck, related_name="chinese_deck", on_delete=models.CASCADE, db_index=True, db_index=True) 
+    deck = models.ForeignKey(ChineseDeck, related_name="chinese_deck", on_delete=models.CASCADE, db_index=True) 
     language = models.CharField(max_length=2, null=False, default="ZH")
-    hsk_level = models.CharField(max_length=4, null=False, choices=TOPIK_LEVELS, default='HSK1', db_index=True)
+    hsk_level = models.CharField(max_length=4, null=False, choices=HSK_LEVELS, default='HSK1', db_index=True)
 
     def __str__(self):
         return self.hanzi
