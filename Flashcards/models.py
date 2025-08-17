@@ -1,7 +1,8 @@
 from django.db import models
 from Authentication.models import User
 from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
-from Decks.datasets import LANGUAGE_CHOICES
+from . datasets import INDO_EUROPEAN_LANGUAGES
+from Decks.datasets import CEFR_LEVELS
 
 class FlashcardBase(models.Model):
     meaning = models.CharField(max_length=200, null=False)
@@ -14,13 +15,14 @@ class FlashcardBase(models.Model):
         abstract = True
 
 class IndoEuropeanFlashcard(FlashcardBase):
+    cefr_level = models.CharField(max_length=2, null=False, choices=CEFR_LEVELS, default='A1')
     word = models.CharField(max_length=200, null=True, db_index=True)
 
     class Meta:
         abstract = True
 
 class Flashcard(IndoEuropeanFlashcard):
-    language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, null=False, db_index=True)
+    language = models.CharField(max_length=2, choices=INDO_EUROPEAN_LANGUAGES, null=False, db_index=True, default="ES")
 
     def __str__(self):
         return self.word
@@ -28,6 +30,8 @@ class Flashcard(IndoEuropeanFlashcard):
 class EnglishFlashcard(IndoEuropeanFlashcard):
     """Allocated space for expected massive rows because of English popularity worldwide"""
     language = models.CharField(max_length=2, null=False, default="EN")
+    author = models.ForeignKey(User, related_name="english_flashcard_author", on_delete=models.CASCADE)
+    deck = models.ForeignKey(Deck, related_name="english_deck", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.word
