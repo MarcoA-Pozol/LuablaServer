@@ -49,12 +49,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     # Api 
+    'Admin'
     'api',
-    'Authentication',
     'Application',
-    'Flashcards',
+    'Authentication',
     'Decks',
-    'Social'
+    'Flashcards',
+    'Social',
 ]
 
 # API Settings
