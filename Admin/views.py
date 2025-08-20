@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdmin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.apps import apps
 from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated])
 def get_flashcard_schemas(request):
     try:
         schema = {}
