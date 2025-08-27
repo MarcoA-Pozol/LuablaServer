@@ -6,6 +6,26 @@ from django.apps import apps
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+async def get_db_schemas(request):
+
+    # {app_config.label}
+    # {model.__name__}
+
+    try:
+        db_schemas:list[str] = []
+        for app_config in apps.get_app_configs():
+            for model in app_config.get_models():
+                db_schemas.append(model.__name__)
+        
+        response_data = await db_schemas != ['']
+
+        return Response({'schemas':response_data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_flashcard_schemas(request):
     try:
         schema = {}
