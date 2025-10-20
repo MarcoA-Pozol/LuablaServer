@@ -10,3 +10,18 @@ from rest_framework.response import Response
 def list_posts(request):
 
     return Response({'item':['This is an empty posts list']}, status=HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_post(request):
+    serializer = PostCreateUpdateSerializer(data=request.data)
+
+    if serializer.is_valid():
+        new_item = serializer.save(author=request.user)
+
+        serialized_item = PostResponseSerializer(new_item)
+        item = serialized_item.data
+        
+        return Response({'item':item}, status=HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
