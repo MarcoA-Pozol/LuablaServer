@@ -1,8 +1,9 @@
 from django.db import models
 from Authentication.models import User
 from . datasets import HSK_LEVELS, CEFR_LEVELS, JLPT_LEVELS, LANGUAGE_CHOICES, TOPIK_LEVELS
+from Luabla.models import BaseModel
 
-class DeckBase(models.Model):
+class DeckBase(BaseModel):
     title = models.CharField(max_length=50, null=False)
     description = models.TextField(null=False)
     author = models.ForeignKey(User, related_name="deck_author", on_delete=models.CASCADE)

@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from Luabla.models import BaseModel
 
-class User(AbstractUser):
+class User(AbstractUser, BaseModel):
     """All Django builded-in User model fields will be inherited to this model and additionally it will have another custom fields"""
     
     personal_description = models.TextField(null=True, default="I am learning a new language!")

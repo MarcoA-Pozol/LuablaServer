@@ -3,13 +3,13 @@ from Authentication.models import User
 from Decks.models import Deck, ChineseDeck, JapaneseDeck, KoreanDeck
 from . datasets import INDO_EUROPEAN_LANGUAGES
 from Decks.datasets import CEFR_LEVELS, HSK_LEVELS, TOPIK_LEVELS, JLPT_LEVELS
+from Luabla.models import BaseModel
 
-class FlashcardBase(models.Model):
+class FlashcardBase(BaseModel):
     meaning = models.CharField(max_length=200, null=False)
     example_phrase = models.CharField(max_length=200, null=True)
     author = models.ForeignKey(User, related_name="flashcard_author", on_delete=models.CASCADE, db_index=True)
     deck = models.ForeignKey(Deck, related_name="deck", on_delete=models.CASCADE, db_index=True) 
-    creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
