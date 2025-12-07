@@ -15,6 +15,17 @@ def list_posts(request):
 
     return Response({'items':serialized_posts}, status=HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_posts_by_user_id(request):
+    language = request.data.get('language')
+    user = request.user
+    
+    posts = PostResponseSerializer(Post.objects.filter(language=language, author=user), many=True)
+    
+    return Response({'items':posts}, status=HTTP_200_OK)
+    
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
