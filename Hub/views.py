@@ -11,7 +11,7 @@ def list_posts(request):
     language = request.data.get('language')
     
     posts = Post.objects.filter(language=language).all()
-    serialized_posts = post_serializer(posts, many=True)
+    serialized_posts = PostResponseSerializer(posts, many=True)
 
     return Response({'items':serialized_posts}, status=HTTP_200_OK)
 
