@@ -7,32 +7,32 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from . throttles import ListPostsByLanguageThrottle
+from Luabla.decorators import manage_exceptions
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 @throttle_classes([ListPostsByLanguageThrottle])
+@manage_exceptions
 def list_posts_by_language(request):
     """Get all posts by language. All posts from other users."""
-    try:
-        language = request.data.get('language')
-        
-        posts = Post.objects.filter(language=language).order_by('-created_at')
+    language = request.data.get('language')
+    
+    posts = Post.objects.filter(language=language).order_by('-created_at')
 
-        paginator = PageNumberPagination()
-        paginator.page_size = 10 
+    paginator = PageNumberPagination()
+    paginator.page_size = 10 
 
-        paginated_posts = paginator.paginate_queryset(posts, request)
+    paginated_posts = paginator.paginate_queryset(posts, request)
 
-        serializer = PostResponseSerializer(paginated_posts, many=True)
-        
-        posts = serializer.data
+    serializer = PostResponseSerializer(paginated_posts, many=True)
+    
+    posts = serializer.data
 
-        return Response({'items':posts}, status=HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({'items':posts}, status=HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@manage_exceptions
 def list_posts_by_user(request):
     """Get all posts of a language from the auth user."""
     language = request.data.get('language')
