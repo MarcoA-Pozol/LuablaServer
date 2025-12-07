@@ -55,7 +55,61 @@ class PostView(APIView):
         
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
     
+    def put(self, request):
+        """Update post values completely"""
+
+        try:
+            post_id = request.query_params.get('id')
+            if not post_id:
+                return Response({'error': 'Missing id'}, status=400)
+
+            try:
+                post = Post.objects.get(id=post_id)
+            except Post.DoesNotExist:
+                return Response({'error': 'Post not found'}, status=404)
+
+            serializer = PostCreateUpdateSerializer(
+                post,
+                data=request.data, 
+                partial=False 
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'item': serializer.data}, status=200)
+            
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response({'error':e}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def patch(self, request):
+        """Update post's values partially"""
+        try:
+            post_id = request.query_params.get('id')
+            if not post_id:
+                return Response({'error': 'Missing id'}, status=400)
+
+            try:
+                post = Post.objects.get(id=post_id)
+            except Post.DoesNotExist:
+                return Response({'error': 'Post not found'}, status=404)
+
+            serializer = PostCreateUpdateSerializer(
+                post,
+                data=request.data,
+                partial=True  
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'item': serializer.data}, status=200)
+            
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response({'error':e}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def delete(self, request):
+        """Delete post from database"""
         try:
             post_id = request.query_params.get('id')
             
