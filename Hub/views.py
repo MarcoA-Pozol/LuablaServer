@@ -1,14 +1,16 @@
 from . models import Post
 from . serializers import PostResponseSerializer, PostCreateUpdateSerializer, PostCommentResponseSerializer, PostCommentCreateUpdateSerializer
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
+from . throttles import ListPostsByLanguageThrottle
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminUser])
+@throttle_classes([ListPostsByLanguageThrottle])
 def list_posts_by_language(request):
     """Get all posts by language. All posts from other users."""
     try:
