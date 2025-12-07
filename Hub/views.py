@@ -8,8 +8,12 @@ from rest_framework.response import Response
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_posts(request):
+    language = request.data.get('language')
+    
+    posts = Post.objects.filter(language=language).all()
+    serialized_posts = post_serializer(posts, many=True)
 
-    return Response({'item':['This is an empty posts list']}, status=HTTP_200_OK)
+    return Response({'items':serialized_posts}, status=HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
