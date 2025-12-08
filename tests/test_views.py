@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from rest_framework import status
-from django.contrib.auth.models import User
+from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from Authentication.models import User
 from Hub.models import Post
 
 class PostAPITests(APITestCase):
@@ -16,23 +16,29 @@ class PostAPITests(APITestCase):
         
     # Tests for @api_view
     def test_list_posts_by_language(self):
-        url = reverse('list_posts_by_language')  # asegúrate de tener nombre en urls
-        response = self.client.get(url, {'language': 'en'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['items']), 2)
+        url = reverse('list_all_posts') 
+        response = self.client.get(url, {'language': 'EN'})
+        self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertEqual(len(response.data['items']), 1)
+
+    def test_list_posts_by_user(self):
+        url = reverse('list_posts_by_user')
+        response = self.client.get(url, {'id':1})
+        self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data['items']), 1)
 
     # Tests for APIView (PostView)
     def test_post_get(self):
         url = reverse('post') + f'?id={self.post1.id}'
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, HTTP_200_OK)
         self.assertEqual(response.data['item']['title'], self.post1.title)
 
     def test_post_put(self):
         url = reverse('post') + f'?id={self.post1.id}'
         data = {'title': 'Updated', 'content': 'Updated content', 'language': 'en'}
         response = self.client.put(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, HTTP_200_OK)
         self.post1.refresh_from_db()
         self.assertEqual(self.post1.title, 'Updated')
 
@@ -40,14 +46,14 @@ class PostAPITests(APITestCase):
         url = reverse('post') + f'?id={self.post1.id}'
         data = {'title': 'Patched'}
         response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, HTTP_200_OK)
         self.post1.refresh_from_db()
         self.assertEqual(self.post1.title, 'Patched')
 
     def test_post_delete(self):
         url = reverse('post') + f'?id={self.post2.id}'
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, HTTP_204_NO_CONTENT)
         self.assertFalse(Post.objects.filter(id=self.post2.id).exists())
 
 
