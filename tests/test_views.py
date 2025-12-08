@@ -23,7 +23,7 @@ class PostAPITests(APITestCase):
 
     def test_list_posts_by_user(self):
         url = reverse('list_posts_by_user')
-        response = self.client.get(url, {'id':1})
+        response = self.client.get(url)
         self.assertEqual(response.status_code, HTTP_200_OK)
         self.assertGreaterEqual(len(response.data['items']), 1)
 
@@ -36,7 +36,7 @@ class PostAPITests(APITestCase):
 
     def test_post_put(self):
         url = reverse('post') + f'?id={self.post1.id}'
-        data = {'title': 'Updated', 'content': 'Updated content', 'language': 'en'}
+        data = {'title': 'Updated', 'opinion': 'Updated content', 'language': 'EN'}
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, HTTP_200_OK)
         self.post1.refresh_from_db()
