@@ -2,7 +2,7 @@ from . models import Post
 from . serializers import PostResponseSerializer, PostCreateUpdateSerializer, PostCommentResponseSerializer, PostCommentCreateUpdateSerializer
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from . throttles import ListPostsByLanguageThrottle
@@ -10,7 +10,7 @@ from Luabla.decorators import manage_exceptions
 from Luabla.mixins import ExceptionHandlerAPIView
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticated])
 @throttle_classes([ListPostsByLanguageThrottle])
 @manage_exceptions
 def list_posts_by_language(request):
