@@ -17,13 +17,22 @@ class PostAPITests(APITestCase):
             return
 
         # Create test posts
-        self.post1 = Post.objects.create(language='EN', title='Post 1', author=self.user, opinion='I think this is the correct way to learn a language: Speaking', speech=None, image=None)
-        self.post2 = Post.objects.create(language='ES', title='Post 2', author=self.user, opinion='Pienso que esta es la manera correcta de aprender un lenguaje: Hablar', speech=None, image=None)
-        
-    # Tests for @api_view
+        try:
+            print("# Creating posts")
+            self.post1 = Post.objects.create(language='EN', title='Post 1', author=self.user, opinion='I think this is the correct way to learn a language: Speaking', speech=None, image=None)
+            self.post2 = Post.objects.create(language='ES', title='Post 2', author=self.user, opinion='Pienso que esta es la manera correcta de aprender un lenguaje: Hablar', speech=None, image=None)
+            print("# Posts were created")
+        except Exception as e:
+            print(f"# Failed to create posts: {e}")
+
+    # Tests
     def test_list_posts_by_language(self):
-        url = reverse('list_all_posts') 
+        url = reverse('list_all_posts')
+
         response = self.client.get(url, {'language': 'EN'})
+
+        print("# Fetched posts by language:", response.data)
+
         self.assertEqual(response.status_code, HTTP_200_OK)
         self.assertEqual(len(response.data['items']), 1)
 

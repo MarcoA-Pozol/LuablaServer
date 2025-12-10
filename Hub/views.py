@@ -12,10 +12,9 @@ from Luabla.mixins import ExceptionHandlerAPIView
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @throttle_classes([ListPostsByLanguageThrottle])
-@manage_exceptions
 def list_posts_by_language(request):
     """Get all posts by language. All posts from other users."""
-    language = request.data.get('language')
+    language = request.GET.get('language')
     
     posts = Post.objects.filter(language=language).order_by('-created_at')
 
