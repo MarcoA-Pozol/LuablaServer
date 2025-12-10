@@ -58,8 +58,8 @@ class PostAPITests(APITestCase):
 
 
 # To include:
-# Include throttling and permissions in your tests.
-# Include error handling decorators.
+# Throttling and permissions in tests.
+# Error handling decorators.
 # Use fixtures or factory_boy to automatically generate many test posts.
 
 # Execute tests

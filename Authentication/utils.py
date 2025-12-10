@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-# Custom Authentication Class for protected endpoints
 class CookieJWTAuthentication(JWTAuthentication):
+    """Custom Authentication Class for protected endpoints"""
     def authenticate(self, request):
         raw_token = request.COOKIES.get('access_token')
         if raw_token is None:
