@@ -8,7 +8,7 @@ class PostResponseSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'author_username', 'opinion', 'speech', 'image', 'created_at']
+        fields = ['id', 'language', 'title', 'author_username', 'opinion', 'speech', 'image', 'created_at']
 
 class PostCreateUpdateSerializer(ModelSerializer):
 

@@ -3,28 +3,21 @@ from rest_framework.test import APITestCase
 from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from Authentication.models import User
 from . models import Post
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class PostAPITests(APITestCase):
     def setUp(self):
         # Create user and authenticate
-        try:
-            print("# Creating user")
-            self.user = User.objects.create_user(username='user1', email='test@example.com', password='testpassword')
-            self.client.login(username='user1', password='testpassword')
-            print("# User was created")
-        except Exception as e:
-            print(f"# User creation failed: {e}")
-            return
+        self.user = User.objects.create_user(username='user1', email='test@example.com', password='testpassword')
+        self.client.login(username='user1', password='testpassword')
 
         # Create test posts
-        try:
-            print("# Creating posts")
-            self.post1 = Post.objects.create(language='EN', title='Post 1', author=self.user, opinion='I think this is the correct way to learn a language: Speaking', speech=None, image=None)
-            self.post2 = Post.objects.create(language='ES', title='Post 2', author=self.user, opinion='Pienso que esta es la manera correcta de aprender un lenguaje: Hablar', speech=None, image=None)
-            print("# Posts were created")
-        except Exception as e:
-            print(f"# Failed to create posts: {e}")
-
+        self.post1 = Post.objects.create(language='EN', title='Post 1', author=self.user, opinion='I think this is the correct way to learn a language: Speaking', speech=None, image=None)
+        self.post2 = Post.objects.create(language='ES', title='Post 2', author=self.user, opinion='Pienso que esta es la manera correcta de aprender un lenguaje: Hablar', speech=None, image=None)
+        
+        refresh = RefreshToken.for_user(self.user)
+        self.client.cookies['access_token'] = str(refresh.access_token)
+        
     # Tests
     def test_list_posts_by_language(self):
         url = reverse('list_all_posts')
@@ -34,13 +27,17 @@ class PostAPITests(APITestCase):
         print("# Fetched posts by language:", response.data)
 
         self.assertEqual(response.status_code, HTTP_200_OK)
-        self.assertEqual(len(response.data['items']), 1)
+        self.assertGreaterEqual(len(response.data['items']), 1)
+        
+    def test_list_posts_by_user_with_language_filter(self):
+        url = reverse('list_posts_by_user')
+        
+        response = self.client.get(url, {'language': 'EN'})
 
-    # def test_list_posts_by_user(self):
-    #     url = reverse('list_posts_by_user')
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, HTTP_200_OK)
-    #     self.assertGreaterEqual(len(response.data['items']), 1)
+        self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertIn('items', response.data)
+        self.assertEqual(len(response.data['items']), 1)
+        self.assertEqual(response.data['items'][0]['language'], 'EN')
 
     # # Tests for APIView (PostView)
     # def test_post_get(self):

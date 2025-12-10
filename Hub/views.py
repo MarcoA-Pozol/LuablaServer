@@ -23,9 +23,9 @@ def list_posts_by_language(request):
 
     paginated_posts = paginator.paginate_queryset(posts, request)
 
-    serializer = PostResponseSerializer(paginated_posts, many=True)
+    serialized_posts = PostResponseSerializer(paginated_posts, many=True)
     
-    posts = serializer.data
+    posts = serialized_posts.data
 
     return Response({'items':posts}, status=HTTP_200_OK)
 
@@ -34,10 +34,11 @@ def list_posts_by_language(request):
 @manage_exceptions
 def list_posts_by_user(request):
     """Get all posts of a language from the auth user."""
-    language = request.data.get('language')
+    language = request.GET.get('language')
     user = request.user
     
-    posts = PostResponseSerializer(Post.objects.filter(language=language, author=user), many=True)
+    serialized_posts = PostResponseSerializer(Post.objects.filter(language=language, author=user), many=True)
+    posts = serialized_posts.data
     
     return Response({'items':posts}, status=HTTP_200_OK)
     
