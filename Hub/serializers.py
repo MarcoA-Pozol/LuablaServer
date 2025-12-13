@@ -79,4 +79,4 @@ class PostResponseSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'languae', 'author', 'title', 'opinion', 'speech', 'image', 'created_at', 'comments']
+        fields = ['id', 'language', 'author', 'title', 'opinion', 'speech', 'image', 'created_at', 'comments']
