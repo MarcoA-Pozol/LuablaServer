@@ -1,4 +1,4 @@
-from . models import Post
+from . models import Post, PostComment
 from . serializers import PostResponseSerializer, PostCreateUpdateSerializer, PostCommentResponseSerializer, PostCommentCreateUpdateSerializer
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
@@ -8,6 +8,7 @@ from rest_framework.pagination import PageNumberPagination
 from . throttles import ListPostsByLanguageThrottle
 from Luabla.decorators import manage_exceptions
 from Luabla.mixins import ExceptionHandlerAPIView
+from django.db.models import Prefetch
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -16,7 +17,12 @@ def list_posts_by_language(request):
     """Get all posts by language. All posts from other users."""
     language = request.GET.get('language')
     
-    posts = Post.objects.filter(language=language).order_by('-created_at')
+    posts = Post.objects.filter(language=language)\
+        .select_related('author')\
+        .prefetch_related(
+            Prefetch('comments', queryset=PostComment.objects.select_related('author'))
+        )\
+        .order_by('-created_at')
 
     paginator = PageNumberPagination()
     paginator.page_size = 10 
@@ -25,9 +31,9 @@ def list_posts_by_language(request):
 
     serialized_posts = PostResponseSerializer(paginated_posts, many=True)
     
-    posts = serialized_posts.data
+    posts_data = serialized_posts.data
 
-    return Response({'items':posts}, status=HTTP_200_OK)
+    return Response({'items': posts_data}, status=HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
