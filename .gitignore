@@ -1,7 +1,8 @@
-venv
+venv/
 .env
-media
-__pycache__
-migrations
-*.pyc
+**/__pycache__/
+*.py[cod]
+*$py.class
 luabladb.sqlite3
+media/
+migrations/
