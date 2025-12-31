@@ -1,4 +1,7 @@
 venv
-planeation.txt
 .env
-test_luabla_content_api_connection.py
+media
+__pycache__
+migrations
+*.pyc
+luabladb.sqlite3
