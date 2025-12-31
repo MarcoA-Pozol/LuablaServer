@@ -3,6 +3,3 @@ venv/
 **/__pycache__/
 *.py[cod]
 *$py.class
-luabladb.sqlite3
-media/
-migrations/
