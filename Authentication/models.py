@@ -1,10 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from Luabla.models import BaseModel
 
-class User(AbstractUser):
+class User(AbstractUser, BaseModel):
     """All Django builded-in User model fields will be inherited to this model and additionally it will have another custom fields"""
     
-    confirm_password = models.CharField(max_length=20, null=False)
     personal_description = models.TextField(null=True, default="I am learning a new language!")
     age = models.IntegerField(null=True, default=0)
     genre = models.CharField(max_length=50, null=True, default="Confident")
@@ -13,6 +13,11 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to="profile_pictures/", null=True, unique=False, default="profile_pictures/default_profile_picture.jpg")
     score = models.IntegerField(null=False, default=0)
     friends = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='friends_with')
+    # App flow fields
+    has_picked_language = models.BooleanField(null=True, default=False)
+    has_valid_email = models.BooleanField(null=True, default=False)
+    description = models.TextField(null=True, default="Hi! I am using Luabla...")
+
 
     def __str__(self):
         return self.username

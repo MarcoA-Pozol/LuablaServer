@@ -1,7 +1,12 @@
 from pathlib import Path
 import os
-import dj_database_url
 from datetime import timedelta
+import environ
+
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,59 +15,84 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e@3=ng=*il=5@8-1dxaibx42iv4s&*&wk0h)3zfa-4!fpw(k9i'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    ".ngrok-free.app",
+    "*"
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://*.ngrok-free.app',
+    'https://*'
+]
 
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies if needed
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:3001'
+] 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Internal REST API Dependencies
+    # REST API Dependencies
     'rest_framework',
     'rest_framework_simplejwt',
-    # App workflow apps
+    # Api 
+    'Admin',
+    'api',
+    'Application',
     'Authentication',
-    'Community',
-    'Profile',
-    'Welcome',
-    # Languages apps
-    'Languages.Chinese',
-    'Languages.English',
-    # Internal API
-    'Luabla_API',
+    'Decks',
+    'Flashcards',
+    'Social',
+    'Hub'
 ]
 
 # API Settings
 REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",  # Only JSON responses
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'Authentication.utils.CookieJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',
+        'anon': '100/day',
+        'list_posts_by_language': '100/hour'
+    }
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=3),
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -81,6 +111,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Application.context_processors.selected_language',
+                'Application.context_processors.total_notifications',
+                'Application.context_processors.total_friend_requests',
+                'Application.context_processors.languages_list'
             ],
         },
     },
@@ -93,13 +127,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Luabla_DB',
-        'USER': 'postgres',
-        'PASSWORD': 'mach1029',
-        # 'HOST': 'luabla_db', # Host DB into a container for developing, but principally for deployament and distribution
-        'HOST': 'localhost', # Testing host, local for debug with ease and only for developing and testing 
-        'PORT': '5432',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': env('DATABASE_NAME'),
+        # 'USER': env('DATABASE_USER'),
+        # 'PASSWORD': env('DATABASE_PASSWORD'),
+        # 'HOST': env('DATABASE_HOST'), # DB into a Docker container.
+        # 'HOST': 'localhost', # Testing host, local for debug with ease and only for developing and testing 
+        # 'PORT': env('DATABASE_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'luabladb.sqlite3'
     }
 }
 
@@ -140,3 +176,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login Default Redirection URL
 LOGIN_URL = 'login'
+
+# Email Service
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER') 
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+# OpenAI
+OPENAI_API_KEY = env('OPENAI_API_KEY')

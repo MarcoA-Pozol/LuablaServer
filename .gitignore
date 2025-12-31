@@ -1,4 +1,4 @@
 venv
-planification.txt
-tracking.txt
-svgs.txt
+planeation.txt
+.env
+test_luabla_content_api_connection.py

@@ -1,22 +1,21 @@
-from django.contrib import admin
 from django.urls import path, include
 # Modules to manage the images routing using static path and files
 from django.conf.urls.static import static
 from django.conf import settings
 
+base_api_url = 'api/'
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('Welcome.urls')),
-    path('authentication/', include('Authentication.urls')),
-    path('community/', include('Community.urls')),
-    path('profile/', include('Profile.urls')),
-    #Languages
-    path('CN/', include('Languages.Chinese.urls')),
-    path('EN/', include('Languages.English.urls')),
-    # API (Internal Luabla API)
-    path('API/', include('Luabla_API.urls')),
+    path(f'{base_api_url}/', include('api.urls')),
+    path(f'{base_api_url}admin/', include('Admin.urls')),
+    path(f'{base_api_url}app/', include('Application.urls')),
+    path(f'{base_api_url}auth/', include('Authentication.urls')),
+    path(f'{base_api_url}flashcards/', include('Flashcards.urls')),
+    path(f'{base_api_url}hub/', include('Hub.urls')),
+    path(f'{base_api_url}decks/', include('Decks.urls')),
+    path(f'{base_api_url}social/', include('Social.urls')),
 ]
 
-# This is to enable Django project to serve media files during development stage.
+# This is to enable Django to serve media files during development stage.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
